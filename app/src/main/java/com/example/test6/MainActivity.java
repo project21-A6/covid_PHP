@@ -2,6 +2,7 @@ package com.example.test6;
 
 import static android.R.layout.simple_list_item_1;
 import static android.R.layout.simple_spinner_dropdown_item;
+import static android.R.layout.simple_spinner_item;
 import static com.example.test6.R.array.gubun_list;
 
 import androidx.annotation.NonNull;
@@ -35,8 +36,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-   Spinner spinner;
-    TextView text2;
+    Spinner spinner;
+
 
     private ArrayList<Covid> arrayCovid = new ArrayList<>();
 
@@ -65,17 +66,17 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("covid_log", Integer.toString(covids.size())); // 데이터를 출력하기 위해서 현재 데이터의 개수 로그로 확인.
                     for(Covid c : covids){
                         arrayCovid.add(c); // 받아온 데이터 저장해 둠.
-                        strArray_covid_info[idx] = "지역 : "+c.getGubun()+",  날짜 :  "+c.getStdDay()+", 총 확진자수 :  "+c.getDefCnt() + ", 일일확진자수 :  "+c.getLocalOccCnt();
-                         Log.d("covid_log", strArray_covid_info[idx]);
-                        idx++; // 위의 로그를 찍기 위해 idx 는 여기서 증가
+                        //strArray_covid_info[idx] = "지역 : "+c.getGubun()+",  날짜 :  "+c.getStdDay()+", 총 확진자수 :  "+c.getDefCnt() + ", 일일확진자수 :  "+c.getLocalOccCnt();
+                         //Log.d("covid_log", strArray_covid_info[idx]);
+                        //idx++; // 위의 로그를 찍기 위해 idx 는 여기서 증가
                     }
-                    listView.setAdapter(
+                  /*  listView.setAdapter(
                             new ArrayAdapter<String>(
                                     getApplicationContext(),
                                     android.R.layout.simple_list_item_1,
                                     strArray_covid_info
                             )
-                    );
+                    );*/
 
                 }else{
                     Toast.makeText(getApplicationContext(),"Failed to get data from the server.",Toast.LENGTH_SHORT).show();
@@ -92,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         //spinner
-        text2 = (TextView) findViewById(R.id.text2);
         spinner = (Spinner) findViewById(R.id.spinner);
 
         ArrayAdapter adapter = ArrayAdapter.createFromResource(getApplicationContext(),
@@ -104,24 +104,29 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                //Log.d("spinner", "onItemSelected: " + position);
 
-                text2.setText("\n" + adapterView.getItemAtPosition(position));
+                ArrayList<String> selectedArr = new ArrayList<String>();
 
-                       /* if (2){
-                            for (c :getApplicationContext().toString()  ){
-
-                                break;
-                            }
-
-                        }else {
-
-                    }*/
+                for(Covid c: arrayCovid){
+                    if(arrayCovid.get(position).getGubun() == c.getGubun()){ //선택한 지역 == array 지역 비교
+                        Log.e(">>>>> logggggg", c.getGubun());
+                        selectedArr.add("지역 : "+c.getGubun()+"\n  날짜 :  "+c.getStdDay()+"\n 총 확진자수 :  "+c.getDefCnt() + "\n 일일확진자수 :  "+c.getLocalOccCnt()); //두지역이 같으면 배열에 데이터 추가
+                    }
+                }
+                
+                listView.setAdapter(
+                        new ArrayAdapter<String>(
+                                getApplicationContext(),
+                                android.R.layout.simple_list_item_1,
+                                selectedArr //Strein 타입, 지역 비교해서 동일한데이터 불러오기
+                        )
+                );
 
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
+                spinner.setSelection(0);
             }
 
 
